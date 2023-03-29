@@ -1,68 +1,63 @@
-import { useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from "@mui/material";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
-import { Cog as CogIcon } from "../icons/cog";
-import { Lock as LockIcon } from "../icons/lock";
+import clone from 'lodash/clone'
+import isEmpty from 'lodash/isEmpty'
+import indexOf from 'lodash/indexOf'
+import map from 'lodash/map'
+import keys from 'lodash/keys'
+import pickBy from 'lodash/pickBy'
+import { Box, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItem, ListItemText, Typography, useMediaQuery } from "@mui/material";
 import { Selector as SelectorIcon } from "../icons/selector";
-import { ShoppingBag as ShoppingBagIcon } from "../icons/shopping-bag";
-import { User as UserIcon } from "../icons/user";
-import { UserAdd as UserAddIcon } from "../icons/user-add";
-import { Users as UsersIcon } from "../icons/users";
-import { XCircle as XCircleIcon } from "../icons/x-circle";
 import { Logo } from "./logo";
-import { NavItem } from "./nav-item";
 import { userService } from "../services";
+import Collapse from '@mui/material/Collapse';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import HomeIcon from '@mui/icons-material/Home';
+import HubIcon from '@mui/icons-material/Hub';
+import PaidIcon from '@mui/icons-material/Paid';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 
 const items = [
   {
     href: "/",
-    icon: <ChartBarIcon fontSize="small" />,
+    icon: <HomeIcon/>,
     title: "Home",
   },
   {
-    href: "/updateCacheEsb",
-    icon: <UsersIcon fontSize="small" />,
-    title: "Update Cache ESB",
+    submenus: [
+      {
+        href: "/updateCacheEsb",
+        title: "Cache",
+      },
+      {
+        href: "/updateServiceEsb",
+        title: "Service",
+      }
+    ],
+    icon: <HubIcon/>,
+    title: "ESB"
   },
-  // {
-  //   href: "/customers",
-  //   icon: <UsersIcon fontSize="small" />,
-  //   title: "Customers",
-  // },
-  // {
-  //   href: "/products",
-  //   icon: <ShoppingBagIcon fontSize="small" />,
-  //   title: "Products",
-  // },
-  // {
-  //   href: "/account",
-  //   icon: <UserIcon fontSize="small" />,
-  //   title: "Account",
-  // },
-  // {
-  //   href: "/settings",
-  //   icon: <CogIcon fontSize="small" />,
-  //   title: "Settings",
-  // },
+  {
+    submenus: [
+      {
+        href: "/updateCacheEsb",
+       // icon: <FiberManualRecordIcon />,
+        title: "Coba",
+      },
+    ],
+    icon: <PaidIcon/>,
+    title: "BI-Fast"
+  },
+
   {
     href: "/logout",
-    icon: <LockIcon fontSize="small" />,
+    icon: <LogoutIcon />,
     title: "Logout",
   },
-  // {
-  //   href: "/register",
-  //   icon: <UserAddIcon fontSize="small" />,
-  //   title: "Register",
-  // },
-  // {
-  //   href: "/404",
-  //   icon: <XCircleIcon fontSize="small" />,
-  //   title: "Error",
-  // },
 ];
 
 export const DashboardSidebar = (props) => {
@@ -73,6 +68,19 @@ export const DashboardSidebar = (props) => {
     noSsr: false,
   });
   const user = userService.userValue;
+
+  // kode untuk membuat expand tiap menu nya 
+  const subMenuIndexes = keys(pickBy(items, item => item.submenus)) // [1,2]
+  const initialOpenSubmenus = map(subMenuIndexes, item => item !== '') // [true, true]
+  const [openSubMenus, setOpenSubMenus] = useState(initialOpenSubmenus)
+
+  const handleClick = (key) => () => {
+    let newOpenSubMenus = clone(openSubMenus)
+    const index = indexOf(subMenuIndexes, String(key))
+    newOpenSubMenus[index] = !newOpenSubMenus[index];
+    setOpenSubMenus(newOpenSubMenus)
+  };
+
   useEffect(
     () => {
       if (!router.isReady) {
@@ -90,6 +98,30 @@ export const DashboardSidebar = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [router.asPath]
   );
+
+  const listItemStyle = {
+    "&$selected": {
+      backgroundColor: "red",
+      color: "white",
+      "& .MuiListItemIcon-root": {
+        color: "white"
+      }
+    },
+    "&$selected:hover": {
+      backgroundColor: "purple",
+      color: "white",
+      "& .MuiListItemIcon-root": {
+        color: "white"
+      }
+    },
+    "&:hover": {
+      backgroundColor: "gray",
+      color: "white",
+      "& .MuiListItemIcon-root": {
+        color: "white"
+      }
+    }
+  }
 
   const content = (
     <>
@@ -155,63 +187,46 @@ export const DashboardSidebar = (props) => {
             my: 3,
           }}
         />
-        <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
-            <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
-          ))}
-        </Box>
-        {/* <Divider sx={{ borderColor: '#2D3748' }} />
-        <Box
-          sx={{
-            px: 2,
-            py: 3
-          }}
+        <List
+          sx={{ width: '100%', maxWidth: 360 }}
+          component="nav"
+          aria-labelledby="nested-list-subheader"
         >
-          <Typography
-            color="neutral.100"
-            variant="subtitle2"
-          >
-            Need more features?
-          </Typography>
-          <Typography
-            color="neutral.500"
-            variant="body2"
-          >
-            Check out our Pro solution template.
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              mt: 2,
-              mx: 'auto',
-              width: '160px',
-              '& img': {
-                width: '100%'
-              }
-            }}
-          >
-            <img
-              alt="Go to pro"
-              src="/static/images/sidebar_pro.png"
-            />
-          </Box>
-          <NextLink
-            href="https://material-kit-pro-react.devias.io/"
-            passHref
-          >
-            <Button
-              color="secondary"
-              component="a"
-              endIcon={(<OpenInNewIcon />)}
-              fullWidth
-              sx={{ mt: 2 }}
-              variant="contained"
-            >
-              Pro Live Preview
-            </Button>
-          </NextLink>
-        </Box>
-       */}
+          {map(items, (item, key) => {
+            const index = indexOf(subMenuIndexes, String(key))
+            
+            return (
+              <Fragment>
+                <ListItem sx={listItemStyle}>
+                  <ListItemButton href={item.href} key={key} onClick={handleClick(key)}>
+                    <ListItemIcon>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.title} />
+                    {!isEmpty(item.submenus) && openSubMenus[index] == true && <ExpandLess />}
+                    {!isEmpty(item.submenus) && openSubMenus[index] == false && <ExpandMore />}
+                  </ListItemButton>
+                </ListItem>
+                {item.submenus && (
+                  <Collapse in={openSubMenus[index]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {map(item.submenus, (submenu, key) =>
+                        <ListItem sx={listItemStyle}>
+                          <ListItemButton href={submenu.href} key={key} sx={{ pl: 4 }}>
+                            <ListItemIcon>
+                              {submenu.icon}
+                            </ListItemIcon>
+                            <ListItemText primary={submenu.title} />
+                          </ListItemButton>
+                        </ListItem>
+                      )}
+                    </List>
+                  </Collapse>
+                )}
+              </Fragment>
+            )
+          })}
+        </List>
       </Box>
     </>
   );

@@ -5,12 +5,12 @@
   "version": "2.1.1",
   "private": false,
   "scripts": {
-    "dev": "next dev -p 3005",
     "build": "next build",
-    "start": "next start -p 8181",
+    "dev": "next dev -p 3005",
     "export": "next export",
+    "lint-fix": "next lint --fix",
     "lint": "next lint",
-    "lint-fix": "next lint --fix"
+    "start": "next start -p 8181"
   },
   "dependencies": {
     "@emotion/cache": "11.10.3",
@@ -27,6 +27,7 @@
     "chart.js": "3.9.1",
     "date-fns": "2.29.3",
     "formik": "2.2.9",
+    "lodash": "^4.17.21",
     "next": "12.3.0",
     "nprogress": "0.2.0",
     "prop-types": "15.8.1",
