@@ -44,9 +44,9 @@ const items = [
   {
     submenus: [
       {
-        href: "/updateCacheEsb",
+        href: "/alertBIFast",
        // icon: <FiberManualRecordIcon />,
-        title: "Coba",
+        title: "Alert",
       },
     ],
     icon: <PaidIcon/>,

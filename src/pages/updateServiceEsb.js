@@ -2,6 +2,7 @@ import { styled, alpha } from '@mui/material/styles';
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
@@ -21,6 +22,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import { DashboardLayout } from "../components/dashboard-layout";
+import { isService } from "../services";
+
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -91,11 +95,13 @@ function SearchAppBar() {
     </Box>
   );
 }
+
 //ini batasnya
-function createData(name, calories, fat, carbs, protein) {
+function createData(name, caloriess, fat, carbs, protein) {
+
   return {
     name,
-    calories,
+    caloriess,
     fat,
     carbs,
     protein,
@@ -117,6 +123,8 @@ const rows = [
   createData('Nougat', 360, 19.0, 9, 37.0),
   createData('Oreo', 437, 18.0, 63, 4.0),
 ];
+
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -154,32 +162,20 @@ const headCells = [
   {
     id: 'name',
     numeric: false,
-    disablePadding: true,
-    label: 'Dessert (100g serving)',
+    disablePadding: false,
+    label: 'Service ID',
   },
   {
     id: 'calories',
     numeric: true,
     disablePadding: false,
-    label: 'Calories',
+    label: 'Service Name',
   },
   {
     id: 'fat',
     numeric: true,
     disablePadding: false,
-    label: 'Fat (g)',
-  },
-  {
-    id: 'carbs',
-    numeric: true,
-    disablePadding: false,
-    label: 'Carbs (g)',
-  },
-  {
-    id: 'protein',
-    numeric: true,
-    disablePadding: false,
-    label: 'Protein (g)',
+    label: 'Action',
   },
 ];
 
@@ -193,7 +189,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -203,7 +199,7 @@ function EnhancedTableHead(props) {
               'aria-label': 'select all desserts',
             }}
           />
-        </TableCell>
+        </TableCell> */}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -239,6 +235,8 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
+
+
 function Page() {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -246,6 +244,43 @@ function Page() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [resultArr, setResultArr] = React.useState([])
+  
+
+  React.useEffect(() => {
+    isService
+    .esbGetService()
+    .then((resp) => {
+      if (resp.status == true) {
+        setResultArr(resp.data);
+        console.log(resultArr)
+      } else {
+      }
+    })
+    .catch(() => {
+    });
+  }, [])
+
+  // React.useEffect(() => {
+  //   isService
+  //   .fetchService()
+  //   .then((resp) => {
+  //     if (resp.data.status == true) {
+  //       // console.log("result", resp)
+  //       setResultArr(resp.data.data);
+  //     } else {
+  //     // nangkep open
+  //     }
+  //   })
+  //   .catch(() => {
+  //     // nangkep catch
+  //   });
+  // }, [])
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    // page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - resultArr.length) : 0;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -297,10 +332,6 @@ function Page() {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -320,24 +351,29 @@ function Page() {
               rowCount={rows.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {
+              // stableSort(rows, getComparator(order, orderBy))
+              //   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              //   .map((row, index) => {
+              //     const isItemSelected = isSelected(row.name);
+              //     const labelId = `enhanced-table-checkbox-${index}`;
 
+              
+              resultArr
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((data, index) => {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      // onClick={(event) => handleClick(event, data.SERVICE_ID)}
                       role="checkbox"
-                      aria-checked={isItemSelected}
+                      // aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
+                      key={data.SERVICE_ID}
+                      // selected={isItemSelected}
                       sx={{ cursor: 'pointer' }}
                     >
-                      <TableCell padding="checkbox">
+                      {/* <TableCell padding="checkbox">
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
@@ -345,22 +381,65 @@ function Page() {
                             'aria-labelledby': labelId,
                           }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell
                         component="th"
-                        id={labelId}
+                        // id={labelId}
                         scope="row"
-                        padding="none"
+                        padding="normal"
+                        // padding="none"
                       >
-                        {row.name}
+                        {data.SERVICE_ID}
                       </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.carbs}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="right">{data.ESB_SVC_NAME}</TableCell>
+                      <TableCell align="right">
+                        <Button variant="outlined" color="success">ENABLED</Button>
+                      </TableCell>
+                      {/* <TableCell align="right">{row.carbs}</TableCell> */}
+                      {/* <TableCell align="right">{row.protein}</TableCell> */}
                     </TableRow>
+                // .map((row, index) => {
+                //   const isItemSelected = isSelected(row.name);
+                //   const labelId = `enhanced-table-checkbox-${index}`;
+
+                //   return (
+                //     <TableRow
+                //       hover
+                //       onClick={(event) => handleClick(event, row.name)}
+                //       role="checkbox"
+                //       aria-checked={isItemSelected}
+                //       tabIndex={-1}
+                //       key={row.name}
+                //       selected={isItemSelected}
+                //       sx={{ cursor: 'pointer' }}
+                //     >
+                //       <TableCell padding="checkbox">
+                //         <Checkbox
+                //           color="primary"
+                //           checked={isItemSelected}
+                //           inputProps={{
+                //             'aria-labelledby': labelId,
+                //           }}
+                //         />
+                //       </TableCell>
+                //       <TableCell
+                //         component="th"
+                //         id={labelId}
+                //         scope="row"
+                //         padding="none"
+                //       >
+                //         {row.name}
+                //       </TableCell>
+                //       <TableCell align="right">{row.calories}</TableCell>
+                //       <TableCell align="right">{row.fat}</TableCell>
+                //       <TableCell align="right">{row.carbs}</TableCell>
+                //       <TableCell align="right">{row.protein}</TableCell>
+                //     </TableRow>
+
+
                   );
                 })}
+
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -376,7 +455,7 @@ function Page() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={resultArr.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
