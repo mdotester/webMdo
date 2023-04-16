@@ -16,8 +16,6 @@ export const isService = {
 };
 
 function fetchService() {
-  // console.log("endpointFetchService:", endpointFetchService);
-  // console.log("token:", token);
   return axios
     .post(
       endpointFetchService,
