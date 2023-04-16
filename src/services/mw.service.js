@@ -3,13 +3,31 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 export const mwService = {
+  createAlert,
   updateCacheEsb,
 };
 
 const user = "admin";
 const password = "SuperSecretPwd";
 const token = Buffer.from(`${user}:${password}`, "utf8").toString("base64");
+const endpointCreateAlert = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeConfig.endpointCreateAlert}`;
 const endpointUpdateCache = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeConfig.endpointUpdateCache}`;
+
+function createAlert(reqBody) {
+  let bodyReq = JSON.stringify(reqBody);
+  return axios
+    .post(endpointCreateAlert, bodyReq, {
+      headers: {
+        Authorization: `Basic ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((resp) => {
+      console.log(resp);
+      return resp;
+    })
+    .catch((err) => console.log('createAlert error : ', err));
+}
 
 function updateCacheEsb(reqBody) {
   let bodyReq = JSON.stringify(reqBody);

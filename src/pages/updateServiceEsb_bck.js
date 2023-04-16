@@ -3,7 +3,10 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
+import MenuIcon from '@mui/icons-material/Menu';
 import Paper from '@mui/material/Paper';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
@@ -17,12 +20,9 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import Grid from '@mui/material/Grid';
 import { visuallyHidden } from '@mui/utils';
 import { DashboardLayout } from "../components/dashboard-layout";
 import { isService } from "../services";
-import { updateServiceEsb } from "../services";
 
 
 
@@ -189,6 +189,17 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
+        {/* <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              'aria-label': 'select all desserts',
+            }}
+          />
+        </TableCell> */}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -232,16 +243,12 @@ function Page() {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [resultArr, setResultArr] = React.useState([])
-  //-----
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   
 
   React.useEffect(() => {
-    updateServiceEsb
+    isService
     .esbGetService()
     .then((resp) => {
       if (resp.status == true) {
@@ -253,6 +260,22 @@ function Page() {
     .catch(() => {
     });
   }, [])
+
+  // React.useEffect(() => {
+  //   isService
+  //   .fetchService()
+  //   .then((resp) => {
+  //     if (resp.data.status == true) {
+  //       // console.log("result", resp)
+  //       setResultArr(resp.data.data);
+  //     } else {
+  //     // nangkep open
+  //     }
+  //   })
+  //   .catch(() => {
+  //     // nangkep catch
+  //   });
+  // }, [])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -307,18 +330,6 @@ function Page() {
     setDense(event.target.checked);
   };
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 250,
-    bgcolor: 'background.paper',
-    border: '1px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   return (
@@ -340,7 +351,14 @@ function Page() {
               rowCount={rows.length}
             />
             <TableBody>
-              {            
+              {
+              // stableSort(rows, getComparator(order, orderBy))
+              //   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              //   .map((row, index) => {
+              //     const isItemSelected = isSelected(row.name);
+              //     const labelId = `enhanced-table-checkbox-${index}`;
+
+              
               resultArr
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((data, index) => {
@@ -355,6 +373,15 @@ function Page() {
                       // selected={isItemSelected}
                       sx={{ cursor: 'pointer' }}
                     >
+                      {/* <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell> */}
                       <TableCell
                         component="th"
                         // id={labelId}
@@ -366,10 +393,50 @@ function Page() {
                       </TableCell>
                       <TableCell align="right">{data.ESB_SVC_NAME}</TableCell>
                       <TableCell align="right">
-                        <Button variant="outlined" color="success" onClick={handleOpen}>ENABLED</Button>
+                        <Button variant="outlined" color="success">ENABLED</Button>
                       </TableCell>
+                      {/* <TableCell align="right">{row.carbs}</TableCell> */}
+                      {/* <TableCell align="right">{row.protein}</TableCell> */}
                     </TableRow>
-               
+                // .map((row, index) => {
+                //   const isItemSelected = isSelected(row.name);
+                //   const labelId = `enhanced-table-checkbox-${index}`;
+
+                //   return (
+                //     <TableRow
+                //       hover
+                //       onClick={(event) => handleClick(event, row.name)}
+                //       role="checkbox"
+                //       aria-checked={isItemSelected}
+                //       tabIndex={-1}
+                //       key={row.name}
+                //       selected={isItemSelected}
+                //       sx={{ cursor: 'pointer' }}
+                //     >
+                //       <TableCell padding="checkbox">
+                //         <Checkbox
+                //           color="primary"
+                //           checked={isItemSelected}
+                //           inputProps={{
+                //             'aria-labelledby': labelId,
+                //           }}
+                //         />
+                //       </TableCell>
+                //       <TableCell
+                //         component="th"
+                //         id={labelId}
+                //         scope="row"
+                //         padding="none"
+                //       >
+                //         {row.name}
+                //       </TableCell>
+                //       <TableCell align="right">{row.calories}</TableCell>
+                //       <TableCell align="right">{row.fat}</TableCell>
+                //       <TableCell align="right">{row.carbs}</TableCell>
+                //       <TableCell align="right">{row.protein}</TableCell>
+                //     </TableRow>
+
+
                   );
                 })}
 
@@ -395,28 +462,10 @@ function Page() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-    
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Disable the service?
-          </Typography>
-          <Grid container spacing={2} sx={{mt:2}}>
-            <Grid item xs={6}>
-              <Button variant="outlined" color="success" >YES</Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button variant="outlined" color="error" onClick={() => handleClose()}>NO</Button>
-            </Grid>
-          </Grid>
-        </Box>
-
-      </Modal>
+      {/* <FormControlLabel
+        control={<Switch checked={dense} onChange={handleChangeDense} />}
+        label="Dense padding"
+      /> */}
     </Box>
   );
 }

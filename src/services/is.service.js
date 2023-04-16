@@ -7,13 +7,12 @@ const { publicRuntimeConfig } = getConfig();
 const endpointFetchService = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeConfig.endpointFetchService}`;
 const endpointEsbGet = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeConfig.endpointEsbGet}`;
 
-// const user = "admin";
-// const password = "SuperSecretPwd";
-// const token = Buffer.from(`${user}:${password}`, "utf8").toString("base64");
+const user = "admin";
+const password = "SuperSecretPwd";
+const token = Buffer.from(`${user}:${password}`, "utf8").toString("base64");
 
 export const isService = {
   fetchService,
-  esbGetService,
 };
 
 function fetchService() {
@@ -33,16 +32,6 @@ function fetchService() {
         },
       }
     )
-    .then((resp) => {
-      // console.log(resp.data, '<<<<<< Response');
-      return resp.data; //Mengembalikan response data.
-    })
-    .catch(console.err);
-}
-
-function esbGetService() {
-  return axios
-    .get(endpointEsbGet)
     .then((resp) => {
       return resp.data; //Mengembalikan response data.
     })

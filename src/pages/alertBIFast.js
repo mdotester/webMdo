@@ -1,293 +1,179 @@
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Modal from '@mui/material/Modal';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import assign from "lodash/assign";
 import Head from "next/head";
-import Router from "next/router";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Link,
-  TextField,
-  FormControlLabel,
-  Checkbox,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { mwService, AlertBox } from "../services";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 
-const varToString = (varObj) => Object.keys(varObj)[0];
+function AlertBIFast() {
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 250,
+    bgcolor: 'background.paper',
+    border: '1px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
-const Page = () => {
-  const [svcName, setSvcName] = useState("");
-  const [isGW, setIsGW] = useState(false);
-  const [isISOGW, setIsISOGW] = useState(false);
-  const [isBLMON, setIsBLMON] = useState(false);
-  const [isBLNONMON, setIsBLNONMON] = useState(false);
-  const [isPLCORE, setIsPLCORE] = useState(false);
-  const [isPLCARD, setIsPLCARD] = useState(false);
-  const [isDC, setIsDC] = useState(false);
-  const [isDRC, setIsDRC] = useState(false);
-  const [isODC, setIsODC] = useState(false);
-
-  const [open, setOpen] = useState(false);
-  const [messageAlert, setMessageAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("error");
+  const [messageAlert, setMessageAlert] = useState("");
+  const [openAlertBox, setOpenAlertBox] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [resultArr, setResultArr] = useState(null);
+  const [values, setValues] = useState({});
+  
+  const handleChange = (e) => {
+    const newValues = assign(values, { [e.target.id]: e.target.value })
+    setValues(newValues)
+  }
+
+  const handleClose = () => setOpenConfirm(false);
+
+  const handleOpen = () => setOpenConfirm(true);
 
   const handleSubmit = () => {
-    let varReq = {};
-    let checkNodeTypeSelected = isGW || isISOGW || isBLMON || isBLNONMON || isPLCORE || isPLCARD;
-    let checkSiteTypeSelected = isDC || isDRC || isODC;
-    // console.log("submited");
-    // console.log("svcName:", svcName);
-    // console.log("set node:", isGW || isISOGW || isBLMON || isBLNONMON || isPLCORE || isPLCARD);
-    // console.log("set site:", isDC || isDRC || isODC);
-
-    varReq[varToString({ isGW }).toString()] = isGW;
-    varReq[varToString({ isISOGW }).toString()] = isISOGW;
-    varReq[varToString({ isBLMON }).toString()] = isBLMON;
-    varReq[varToString({ isBLNONMON }).toString()] = isBLNONMON;
-    varReq[varToString({ isPLCORE }).toString()] = isPLCORE;
-    varReq[varToString({ isPLCARD }).toString()] = isPLCARD;
-    varReq[varToString({ isDC }).toString()] = isDC;
-    varReq[varToString({ isDRC }).toString()] = isDRC;
-    varReq[varToString({ isODC }).toString()] = isODC;
-    varReq["svcName"] = svcName;
-    console.log(varReq);
-
-    if (!checkNodeTypeSelected) {
-      setOpen(true);
-      setMessageAlert("must select at least one node type");
+    const failResponse = () => {
       setErrorAlert("error");
-    } else if (!checkSiteTypeSelected) {
-      setOpen(true);
-      setMessageAlert("must select at least one site type");
-      setErrorAlert("error");
-    } else {
-      mwService
-        .updateCacheEsb(varReq)
+      setMessageAlert("fail to add alert");
+      setOpenAlertBox(true);
+      setOpenConfirm(false);
+    }
+    
+    mwService
+        .createAlert(values)
         .then((resp) => {
-          if (resp.data.status) {
-            setResultArr(resp.data.data);
-            setOpen(true);
-            setMessageAlert("success to update cache");
+          if (resp.data.status == true) {
             setErrorAlert("success");
+            setMessageAlert("success to add alert");
+            setOpenAlertBox(true);
+            setOpenConfirm(false);
+            setResultArr(resp.data.result);
           } else {
-            setOpen(true);
-            setMessageAlert("fail to update cache");
-            setErrorAlert("error");
+            failResponse()
           }
         })
-        .catch(() => {
-          setOpen(true);
-          setMessageAlert("fail to update cache");
-          setErrorAlert("error");
-        });
-    }
-  };
+        .catch(failResponse);
+  }
+
   return (
-    <>
-      <Head>
-        <title>Update Cache | MDO</title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
+  <>  
+    <Head>
+        <title>Form Alert | MDO</title>
+    </Head>
+
+    <Box
+      autoComplete="off"
+      component="form"
+      noValidate
+      sx={{
+        '& .MuiTextField-root': {
           display: "flex",
           flexGrow: 1,
-          minHeight: "100%",
-        }}
-      >
-        <Container maxWidth="sm">
-          {/* <form onSubmit={handleSubmit}> */}
+          minHeight: "75%",
+        },
+      }}
+    >
+      <Grid container  justifyContent="center" spacing={2}>
+        <Grid item xs={10}>
           <TextField
-            //   error={Boolean(formik.touched.user && formik.errors.user)}
-            fullWidth
-            //   helperText={formik.touched.user && formik.errors.user}
-            label="Service Name to Invoke"
-            margin="normal"
-            name="svcName"
-            //   onBlur={formik.handleBlur}
-            onChange={(e) => {
-              setSvcName(e.target.value);
-            }}
-            //   onChange={formik.handleChange}
-            type="text"
-            //   value={formik.values.user}
-            value={svcName}
-            variant="outlined"
+              id="alertName"
+              label="Name of Alert"
+              maxRows={4}
+              multiline
+              onChange={handleChange}
+            />
+        </Grid>
+        <Grid item xs={5}>
+          <TextField
+            id="groupName"
+            label="Group Whatsapp"
+            multiline
+            maxRows={4}
+            onChange={handleChange}
           />
-          <br />
-          <hr />
-          <br />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isGW}
-                onChange={() => {
-                  setIsGW(!isGW);
-                }}
-                name="GW"
-              />
-            }
-            label="GW"
+        </Grid>
+        <Grid item xs={5}>
+          <TextField
+            id="caption"
+            label="Caption for Alert"
+            multiline
+            onChange={handleChange}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isISOGW}
-                onChange={() => {
-                  setIsISOGW(!isISOGW);
-                }}
-                name="ISOGW"
-              />
-            }
-            label="ISOGW"
+        </Grid>
+        <Grid item xs={10}>
+          <TextField
+            id="kibanaQuery"
+            label="KQL Query"
+            multiline
+            onChange={handleChange}
+            rows={6}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isBLMON}
-                onChange={() => {
-                  setIsBLMON(!isBLMON);
-                }}
-                name="BLMON"
-              />
-            }
-            label="BLMON"
+        </Grid>
+        <Grid item xs={10}>
+          <TextField
+            id="threshold"
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} 
+            label="Threshold"
+            multiline
+            onChange={handleChange}
+            type="number"
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isBLNONMON}
-                onChange={() => {
-                  setIsBLNONMON(!isBLNONMON);
-                }}
-                name="BLNONMON"
-              />
-            }
-            label="BLNONMON"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isPLCORE}
-                onChange={() => {
-                  setIsPLCORE(!isPLCORE);
-                }}
-                name="PLCORE"
-              />
-            }
-            label="PLCORE"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isPLCARD}
-                onChange={() => {
-                  setIsPLCARD(!isPLCARD);
-                }}
-                name="PLCARD"
-              />
-            }
-            label="PLCARD"
-          />
-          <br />
-          <hr />
-          <br />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isDC}
-                onChange={() => {
-                  setIsDC(!isDC);
-                }}
-                name="DC"
-              />
-            }
-            label="DC"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isDRC}
-                onChange={() => {
-                  setIsDRC(!isDRC);
-                }}
-                name="DRC"
-                disabled
-              />
-            }
-            label="DRC"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isODC}
-                onChange={() => {
-                  setIsODC(!isODC);
-                }}
-                name="ODC"
-                disabled
-              />
-            }
-            label="ODC"
-          />
-          <Box sx={{ py: 2 }}>
-            <Button
+        </Grid>
+        <Grid item xs={10}>
+          <Button
               color="primary"
-              // disabled={formik.isSubmitting}
               fullWidth
               size="large"
-              onClick={handleSubmit}
-              type="submit"
               variant="contained"
+              onClick={handleOpen}
             >
-              Submit
-            </Button>
-          </Box>
-          <AlertBox open={open} setOpen={setOpen} message={messageAlert} errorType={errorAlert} />
-          {/* </form> */}
+            Submit
+          </Button>
+         </Grid>
+        <Grid item xs={10}>
+          <AlertBox
+            errorType={errorAlert}
+            message={messageAlert}
+            open={openAlertBox}
+            setOpen={setOpenAlertBox}
+          />
+         </Grid>
+      </Grid>
+      <Modal
+        open={openConfirm}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Are you sure ?
+          </Typography>
+          <Grid container spacing={2} sx={{mt:2}}>
+            <Grid item xs={6}>
+              <Button variant="outlined" type="submit" onClick={handleSubmit} color="success" >
+              YES
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button variant="outlined" color="error" onClick={handleClose}>NO</Button>
+            </Grid>
+          </Grid>
+        </Box>
 
-          {resultArr && open == true && (
-            <TableContainer component={Paper}>
-              <Table aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>IP</TableCell>
-                    <TableCell align="right">Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {resultArr.map((row) => (
-                    <TableRow
-                      key={row.IP}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {row.IP}
-                      </TableCell>
-                      <TableCell align="right">{row.Status}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Container>
-      </Box>
-    </>
+      </Modal>
+    </Box>
+  </>
   );
-};
-Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+}
 
-export default Page;
+AlertBIFast.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+export default AlertBIFast;

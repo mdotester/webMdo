@@ -117,9 +117,7 @@ const Page = () => {
             margin="normal"
             name="svcName"
             //   onBlur={formik.handleBlur}
-            onChange={(e) => {
-              setSvcName(e.target.value);
-            }}
+            onChange={(e) => setSvcName(e.target.value)}
             //   onChange={formik.handleChange}
             type="text"
             //   value={formik.values.user}
@@ -245,7 +243,6 @@ const Page = () => {
           <Box sx={{ py: 2 }}>
             <Button
               color="primary"
-              // disabled={formik.isSubmitting}
               fullWidth
               size="large"
               onClick={handleSubmit}
