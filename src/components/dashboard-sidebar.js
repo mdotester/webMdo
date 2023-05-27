@@ -86,7 +86,7 @@ export const DashboardSidebar = (props) => {
       if (!router.isReady) {
         return;
       }
-      console.log(userService.userValue);
+      // console.log(userService.userValue);
 
       // if (userService.userValue) {
       //   console.log("test");
