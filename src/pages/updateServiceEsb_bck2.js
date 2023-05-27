@@ -94,6 +94,40 @@ function SearchAppBar() {
   );
 }
 
+//ini batasnya
+
+// function descendingComparator(a, b, orderBy) {
+//   if (b[orderBy] < a[orderBy]) {
+//     return -1;
+//   }
+//   if (b[orderBy] > a[orderBy]) {
+//     return 1;
+//   }
+//   return 0;
+// }
+
+// function getComparator(order, orderBy) {
+//   return order === 'desc'
+//     ? (a, b) => descendingComparator(a, b, orderBy)
+//     : (a, b) => -descendingComparator(a, b, orderBy);
+// }
+
+// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
+// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
+// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
+// with exampleArray.slice().sort(exampleComparator)
+// function stableSort(array, comparator) {
+//   const stabilizedThis = array.map((el, index) => [el, index]);
+//   stabilizedThis.sort((a, b) => {
+//     const order = comparator(a[0], b[0]);
+//     if (order !== 0) {
+//       return order;
+//     }
+//     return a[1] - b[1];
+//   });
+//   return stabilizedThis.map((el) => el[0]);
+// }
+
 const headCells = [
   {
     id: 'service-id',
@@ -175,6 +209,7 @@ function Page() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   
+
   React.useEffect(() => {
     updateServiceEsb
     .esbGetService()
@@ -206,6 +241,26 @@ function Page() {
     setSelected([]);
   };
 
+  // const handleClick = (event, name) => {
+  //   const selectedIndex = selected.indexOf(name);
+  //   let newSelected = [];
+
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, name);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
+
+  //   setSelected(newSelected);
+  // };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -214,6 +269,10 @@ function Page() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // const handleChangeDense = (event) => {
+  //   setDense(event.target.checked);
+  // };
 
   const style = {
     position: 'absolute',
@@ -265,7 +324,7 @@ function Page() {
                     >
                       <TableCell
                         component="th"
-                        id={index}
+                        // id={labelId}
                         scope="row"
                         padding="normal"
                         // padding="none"

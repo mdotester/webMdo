@@ -1,4 +1,6 @@
 import Head from "next/head";
+import React from 'react';
+import logo from '../../public/static/images/logo/MDO_logo_no_bg.png';
 import NextLink from "next/link";
 import Router from "next/router";
 import { useFormik } from "formik";
@@ -15,7 +17,6 @@ const Login = () => {
   const [open, setOpen] = useState(false);
   const [messageAlert, setMessageAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("error");
-
   const formik = useFormik({
     initialValues: {
       user: "",
@@ -71,6 +72,7 @@ const Login = () => {
               Dashboard
             </Button>
           </NextLink> */}
+          {/* <img src={"../../public/static/images/logo/MDO_logo_no_bg.png"} alt="Logo" /> */}
           <AlertBox open={open} setOpen={setOpen} message={messageAlert} errorType={errorAlert} />
 
           <form onSubmit={formik.handleSubmit}>
