@@ -21,7 +21,7 @@ import Modal from "@mui/material/Modal";
 import Grid from "@mui/material/Grid";
 import { visuallyHidden } from "@mui/utils";
 import { DashboardLayout } from "../components/dashboard-layout";
-import { updateServiceEsb, auditService } from "../services";
+import { auditService } from "../services";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -95,16 +95,35 @@ function SearchAppBar() {
 
 const headCells = [
   {
-    id: "service-id",
+    id: "audit-type",
     numeric: false,
     disablePadding: false,
-    label: "Service ID",
+    label: "Service",
   },
+
   {
-    id: "service-name",
+    id: "audit-message",
     numeric: true,
     disablePadding: false,
-    label: "Service Name",
+    label: "Changes Log",
+  },
+  {
+    id: "audit-pn",
+    numeric: true,
+    disablePadding: false,
+    label: "PN",
+  },
+  {
+    id: "audit-name",
+    numeric: true,
+    disablePadding: false,
+    label: "Edited By",
+  },
+  {
+    id: "audit-timestamp",
+    numeric: true,
+    disablePadding: false,
+    label: "Updated At",
   },
   {
     id: "action",
@@ -173,58 +192,14 @@ function Page() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [resultArr, setResultArr] = React.useState([]);
-  const [values, setValues] = React.useState({});
-  // const [values, setValues] = React.useState({
-  //   TIMESTAMP: "",
-  //   PN: "",
-  //   NAME: "",
-  //   TYPE: "",
-  //   MESSAGE: "",
-  // });
   //-----
   const [open, setOpen] = React.useState(false);
-  const handleOpen = (ESB_NAME) => {
-    setValues({
-      TIMESTAMP: "2023-05-25 18:00:02.20",
-      PN: "00294605",
-      NAME: "Vadio Putradeiv Noor",
-      TYPE: "ESB SERVICE",
-      MESSAGE: `Disabling service ${ESB_NAME}`,
-    });
-    setOpen(true);
-  };
+  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // React.useEffect(() => {
-  //   console.log(values);
-  // }, [values]);
-
-  const handleSubmit = () => {
-    console.log(values);
-    // const failResponse = () => {
-    //   setErrorAlert("Error");
-    //   setMessageAlert("Fail to change the Service");
-    //   setOpenAlertBox(true);
-    //   setOpenConfirm(false);
-    // };
-    auditService.auditInsert(values).then((resp) => {
-      console.log(resp);
-      // if (resp.data.status == true) {
-      //   setErrorAlert("Success");
-      //   setMessageAlert("Success to change the Service");
-      //   setOpenAlertBox(true);
-      //   setOpenConfirm(false);
-      //   setResultArr(resp.data.result);
-      // } else {
-      //   failResponse();
-      // }
-    });
-    // .catch(failResponse);
-  };
-
   React.useEffect(() => {
-    updateServiceEsb
-      .esbGetService()
+    auditService
+      .auditGet()
       .then((resp) => {
         if (resp.status == true) {
           setResultArr(resp.data);
@@ -315,14 +290,17 @@ function Page() {
                         padding="normal"
                         // padding="none"
                       >
-                        {data.SERVICE_ID}
+                        {data.TYPE}
                       </TableCell>
-                      <TableCell align="right">{data.ESB_SVC_NAME}</TableCell>
+                      <TableCell align="right">{data.MESSAGE}</TableCell>
+                      <TableCell align="right">{data.PN}</TableCell>
+                      <TableCell align="right">{data.NAME}</TableCell>
+                      <TableCell align="right">{data.TIMESTAMP}</TableCell>
                       <TableCell align="right">
                         <Button
                           variant="outlined"
                           color="success"
-                          onClick={() => handleOpen(data.ESB_SVC_NAME)}
+                          onClick={handleOpen}
                         >
                           ENABLED
                         </Button>
@@ -354,7 +332,8 @@ function Page() {
         />
       </Paper>
 
-      <Modal
+      {/* // Modal */}
+      {/* <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -366,13 +345,7 @@ function Page() {
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={6}>
-              <Button
-                variant="outlined"
-                type="submit"
-                onClick={() => handleSubmit()}
-                color="success"
-              >
-                {/* <Button variant="outlined" color="success"> */}
+              <Button variant="outlined" color="success">
                 YES
               </Button>
             </Grid>
@@ -387,7 +360,7 @@ function Page() {
             </Grid>
           </Grid>
         </Box>
-      </Modal>
+      </Modal> */}
     </Box>
   );
 }
