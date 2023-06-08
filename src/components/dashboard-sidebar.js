@@ -2,32 +2,45 @@ import { Fragment, useEffect, useState } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import clone from 'lodash/clone'
-import isEmpty from 'lodash/isEmpty'
-import indexOf from 'lodash/indexOf'
-import map from 'lodash/map'
-import keys from 'lodash/keys'
-import pickBy from 'lodash/pickBy'
-import { Box, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItem, ListItemText, Typography, useMediaQuery } from "@mui/material";
+import clone from "lodash/clone";
+import isEmpty from "lodash/isEmpty";
+import indexOf from "lodash/indexOf";
+import map from "lodash/map";
+import keys from "lodash/keys";
+import pickBy from "lodash/pickBy";
+import {
+  Box,
+  Divider,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItem,
+  ListItemText,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { Selector as SelectorIcon } from "../icons/selector";
 import { Logo } from "./logo";
 import { userService } from "../services";
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import HomeIcon from '@mui/icons-material/Home';
-import HubIcon from '@mui/icons-material/Hub';
-import PaidIcon from '@mui/icons-material/Paid';
-import LogoutIcon from '@mui/icons-material/Logout';
-
+import Collapse from "@mui/material/Collapse";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import HomeIcon from "@mui/icons-material/Home";
+import HubIcon from "@mui/icons-material/Hub";
+import PaidIcon from "@mui/icons-material/Paid";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const items = [
   {
     href: "/",
-    icon: <HomeIcon/>,
+    icon: <HomeIcon />,
     title: "Home",
   },
   {
+    icon: <HubIcon />,
+    title: "ESB",
     submenus: [
       {
         href: "/updateCacheEsb",
@@ -36,21 +49,29 @@ const items = [
       {
         href: "/updateServiceEsb",
         title: "Service",
-      }
+      },
     ],
-    icon: <HubIcon/>,
-    title: "ESB"
   },
   {
+    icon: <PaidIcon />,
+    title: "BI-Fast",
     submenus: [
       {
         href: "/alertBIFast",
-       // icon: <FiberManualRecordIcon />,
+        // icon: <FiberManualRecordIcon />,
         title: "Alert",
       },
     ],
-    icon: <PaidIcon/>,
-    title: "BI-Fast"
+  },
+  {
+    icon: <FormatListBulletedIcon />,
+    title: "Audit Trail",
+    submenus: [
+      {
+        href: "/audit-log",
+        title: "Audit Log",
+      },
+    ],
   },
 
   {
@@ -69,16 +90,16 @@ export const DashboardSidebar = (props) => {
   });
   const user = userService.userValue;
 
-  // kode untuk membuat expand tiap menu nya 
-  const subMenuIndexes = keys(pickBy(items, item => item.submenus)) // [1,2]
-  const initialOpenSubmenus = map(subMenuIndexes, item => item !== '') // [true, true]
-  const [openSubMenus, setOpenSubMenus] = useState(initialOpenSubmenus)
+  // kode untuk membuat expand tiap menu nya
+  const subMenuIndexes = keys(pickBy(items, (item) => item.submenus)); // [1,2]
+  const initialOpenSubmenus = map(subMenuIndexes, (item) => item !== ""); // [true, true]
+  const [openSubMenus, setOpenSubMenus] = useState(initialOpenSubmenus);
 
   const handleClick = (key) => () => {
-    let newOpenSubMenus = clone(openSubMenus)
-    const index = indexOf(subMenuIndexes, String(key))
+    let newOpenSubMenus = clone(openSubMenus);
+    const index = indexOf(subMenuIndexes, String(key));
     newOpenSubMenus[index] = !newOpenSubMenus[index];
-    setOpenSubMenus(newOpenSubMenus)
+    setOpenSubMenus(newOpenSubMenus);
   };
 
   useEffect(
@@ -104,24 +125,24 @@ export const DashboardSidebar = (props) => {
       backgroundColor: "red",
       color: "white",
       "& .MuiListItemIcon-root": {
-        color: "white"
-      }
+        color: "white",
+      },
     },
     "&$selected:hover": {
       backgroundColor: "purple",
       color: "white",
       "& .MuiListItemIcon-root": {
-        color: "white"
-      }
+        color: "white",
+      },
     },
     "&:hover": {
       backgroundColor: "gray",
       color: "white",
       "& .MuiListItemIcon-root": {
-        color: "white"
-      }
-    }
-  }
+        color: "white",
+      },
+    },
+  };
 
   const content = (
     <>
@@ -188,43 +209,54 @@ export const DashboardSidebar = (props) => {
           }}
         />
         <List
-          sx={{ width: '100%', maxWidth: 360 }}
+          sx={{ width: "100%", maxWidth: 360 }}
           component="nav"
           aria-labelledby="nested-list-subheader"
         >
           {map(items, (item, key) => {
-            const index = indexOf(subMenuIndexes, String(key))
-            
+            const index = indexOf(subMenuIndexes, String(key));
+
             return (
               <Fragment>
                 <ListItem sx={listItemStyle}>
-                  <ListItemButton href={item.href} key={key} onClick={handleClick(key)}>
-                    <ListItemIcon>
-                      {item.icon}
-                    </ListItemIcon>
+                  <ListItemButton
+                    href={item.href}
+                    key={key}
+                    onClick={handleClick(key)}
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.title} />
-                    {!isEmpty(item.submenus) && openSubMenus[index] == true && <ExpandLess />}
-                    {!isEmpty(item.submenus) && openSubMenus[index] == false && <ExpandMore />}
+                    {!isEmpty(item.submenus) && openSubMenus[index] == true && (
+                      <ExpandLess />
+                    )}
+                    {!isEmpty(item.submenus) &&
+                      openSubMenus[index] == false && <ExpandMore />}
                   </ListItemButton>
                 </ListItem>
                 {item.submenus && (
-                  <Collapse in={openSubMenus[index]} timeout="auto" unmountOnExit>
+                  <Collapse
+                    in={openSubMenus[index]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
                     <List component="div" disablePadding>
-                      {map(item.submenus, (submenu, key) =>
+                      {map(item.submenus, (submenu, key) => (
                         <ListItem sx={listItemStyle}>
-                          <ListItemButton href={submenu.href} key={key} sx={{ pl: 4 }}>
-                            <ListItemIcon>
-                              {submenu.icon}
-                            </ListItemIcon>
+                          <ListItemButton
+                            href={submenu.href}
+                            key={key}
+                            sx={{ pl: 4 }}
+                          >
+                            <ListItemIcon>{submenu.icon}</ListItemIcon>
                             <ListItemText primary={submenu.title} />
                           </ListItemButton>
                         </ListItem>
-                      )}
+                      ))}
                     </List>
                   </Collapse>
                 )}
               </Fragment>
-            )
+            );
           })}
         </List>
       </Box>

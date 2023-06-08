@@ -8,6 +8,6 @@ module.exports = {
     endpointEsbGet: "/esbGet/",
     endpointFetchService: "/fetchService/",
     endpointUpdateCache: "/updateCacheESB/",
-
+    endpointAuditTrail: "/audit/",
   },
 };

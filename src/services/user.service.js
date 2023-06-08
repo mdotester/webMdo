@@ -12,8 +12,8 @@ const userSubject = new BehaviorSubject(
 );
 
 // const userBrigate = "contactCenter";
-const userBrigate = "admin";
 // const passwordBrigate = "C0nt4ctC3nter!14017";
+const userBrigate = "admin";
 const passwordBrigate = "SuperSecretPwd";
 const token = Buffer.from(`${userBrigate}:${passwordBrigate}`, "utf8").toString("base64");
 
@@ -27,8 +27,6 @@ export const userService = {
 };
 
 function login(username, password) {
-  console.log("baseUrl:", baseUrl);
-  console.log("token:", token);
   return axios
     .post(
       baseUrl,
