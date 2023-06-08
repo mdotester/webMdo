@@ -1,11 +1,19 @@
 import Head from "next/head";
-import React from 'react';
-import logo from '../../public/static/images/logo/MDO_logo_no_bg.png';
+import React from "react";
+import logo from "../../public/static/images/logo/MDO_logo_no_bg.png";
 import NextLink from "next/link";
 import Router from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Facebook as FacebookIcon } from "../icons/facebook";
 import { Google as GoogleIcon } from "../icons/google";
@@ -29,14 +37,12 @@ const Login = () => {
     onSubmit: (values, { setSubmitting }) => {
       userService
         .login(formik.values.user, formik.values.password)
-        .then((user) => {
-          if (user.data.status == true) {
-            // console.log("ok");
+        .then((data) => {
+          if (data.status == true) {
             Router.push("/").catch(console.error);
           } else {
-            console.log("not ok");
             setOpen(true);
-            setMessageAlert(user.data.message);
+            setMessageAlert(data.message);
             setErrorAlert("error");
             // alertService.error("gagal login");
           }
@@ -44,6 +50,25 @@ const Login = () => {
         .catch(alertService.error);
       setSubmitting(false);
     },
+    // onSubmit: (values, { setSubmitting }) => {
+    //   userService
+    //     .login(formik.values.user, formik.values.password)
+    //     .then((user) => {
+    //       console.log(user.status);
+    //       if (user.data.status == true) {
+    //         // console.log("ok");
+    //         Router.push("/").catch(console.error);
+    //       } else {
+    //         console.log("not ok");
+    //         setOpen(true);
+    //         setMessageAlert(user.data.message);
+    //         setErrorAlert("error");
+    //         // alertService.error("gagal login");
+    //       }
+    //     })
+    //     .catch(alertService.error);
+    //   setSubmitting(false);
+    // },
   });
 
   return (
@@ -73,7 +98,12 @@ const Login = () => {
             </Button>
           </NextLink> */}
           {/* <img src={"../../public/static/images/logo/MDO_logo_no_bg.png"} alt="Logo" /> */}
-          <AlertBox open={open} setOpen={setOpen} message={messageAlert} errorType={errorAlert} />
+          <AlertBox
+            open={open}
+            setOpen={setOpen}
+            message={messageAlert}
+            errorType={errorAlert}
+          />
 
           <form onSubmit={formik.handleSubmit}>
             {/* <Box sx={{ my: 3 }}>
