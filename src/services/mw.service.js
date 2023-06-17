@@ -1,4 +1,4 @@
-import axios from "axios";
+import { postApi } from "../common/api";
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
@@ -14,33 +14,19 @@ const endpointCreateAlert = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeCo
 const endpointUpdateCache = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeConfig.endpointUpdateCache}`;
 
 function createAlert(reqBody) {
-  let bodyReq = JSON.stringify(reqBody);
-  return axios
-    .post(endpointCreateAlert, bodyReq, {
-      headers: {
-        Authorization: `Basic ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
+  const bodyReq = JSON.stringify(reqBody);
+  return postApi(endpointCreateAlert, bodyReq)
     .then((resp) => {
       console.log(resp);
       return resp;
     })
-    .catch((err) => console.log('createAlert error : ', err));
+    .catch((err) => console.log("createAlert error : ", err));
 }
 
 function updateCacheEsb(reqBody) {
-  let bodyReq = JSON.stringify(reqBody);
-  //   console.log(bodyReq);
+  const bodyReq = JSON.stringify(reqBody);
   console.log(endpointUpdateCache);
-  return axios
-    .post(endpointUpdateCache, bodyReq, {
-      headers: {
-        Authorization: `Basic ${token}`,
-        "Content-Type": "application/json",
-        // "Access-Control-Allow-Credentials": "true",
-      },
-    })
+  return postApi(endpointUpdateCache, bodyReq)
     .then((resp) => {
       // publish user to subscribers and store in local storage to stay logged in between page refreshes
       console.log(resp);
