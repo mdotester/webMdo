@@ -8,7 +8,7 @@ const token = Buffer.from(`${userBrigate}:${passwordBrigate}`, "utf8").toString(
   "base64"
 );
 
-// Req interceptor
+// Request interceptor
 instance.interceptors.request.use(
   function (request) {
     const isLogin = request.url.includes("login");

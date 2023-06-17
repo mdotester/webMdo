@@ -23,7 +23,7 @@ export const DashboardLayout = (props) => {
   const user = userService.userValue;
 
   useEffect(() => {
-    //console.log(user);
+    console.log(userService);
     if (!user) {
       Router.push("/login").catch(console.error);
     }
@@ -44,7 +44,10 @@ export const DashboardLayout = (props) => {
         </Box>
       </DashboardLayoutRoot>
       {/* <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} /> */}
-      <DashboardSidebar onClose={() => setSidebarOpen(false)} open={isSidebarOpen} />
+      <DashboardSidebar
+        onClose={() => setSidebarOpen(false)}
+        open={isSidebarOpen}
+      />
     </AuthGuard>
   );
 };
