@@ -182,13 +182,13 @@ export const DashboardSidebar = (props) => {
               <div>
                 {user && (
                   <Typography color="inherit" variant="subtitle2">
-                    {userService.userValue.data.data.sname}
+                    {userService.userValue.data.sname}
                   </Typography>
                 )}
                 <br />
                 {user && (
                   <Typography color="neutral.400" variant="body2">
-                    {userService.userValue.data.data.pernr}
+                    {userService.userValue.data.pernr}
                   </Typography>
                 )}
               </div>
