@@ -1,5 +1,5 @@
 import getConfig from "next/config";
-import axios from "axios"
+import { getApi } from "../common/api";
 
 const { publicRuntimeConfig } = getConfig();
 const endpointEsbGet = `${publicRuntimeConfig.apiCloseUrl}${publicRuntimeConfig.endpointEsbGet}`;
@@ -9,18 +9,9 @@ const password = "SuperSecretPwd";
 const token = Buffer.from(`${user}:${password}`, "utf8").toString("base64");
 
 export const updateServiceEsb = {
-    esbGetService,
+  esbGetService,
 };
 
 function esbGetService() {
-    return axios
-      .get(endpointEsbGet, {
-        headers: {
-          Authorization: `Basic ${token}`,
-        }
-      })
-      .then((resp) => {
-        return resp.data;
-      })
-      .catch(console.err);
-  }
+  return getApi(endpointEsbGet).catch(console.err);
+}
