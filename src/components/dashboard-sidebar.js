@@ -155,7 +155,8 @@ export const DashboardSidebar = (props) => {
       >
         <div>
           <Box sx={{ p: 3 }}>
-            <NextLink href="/" passHref>
+            {/* Dibawah ini digunakan untuk simbol yg di sidebar */}
+            {/* <NextLink href="/" passHref>
               <a>
                 <Logo
                   sx={{
@@ -164,7 +165,7 @@ export const DashboardSidebar = (props) => {
                   }}
                 />
               </a>
-            </NextLink>
+            </NextLink> */}
           </Box>
           <Box sx={{ px: 2 }}>
             <Box

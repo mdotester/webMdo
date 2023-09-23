@@ -23,7 +23,7 @@ export const DashboardLayout = (props) => {
   const user = userService.userValue;
 
   useEffect(() => {
-    console.log(userService);
+    // console.log(userService);
     if (!user) {
       Router.push("/login").catch(console.error);
     }
