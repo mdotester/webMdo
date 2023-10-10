@@ -73,6 +73,16 @@ const items = [
       },
     ],
   },
+  {
+    icon: <FormatListBulletedIcon />,
+    title: "Other",
+    submenus: [
+      {
+        href: "/oom",
+        title: "Hourly Report MDO",
+      },
+    ],
+  },
 
   {
     href: "/logout",
