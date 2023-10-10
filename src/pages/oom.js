@@ -7,14 +7,8 @@ import InputBase from "@mui/material/InputBase";
 import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
 import SearchIcon from "@mui/icons-material/Search";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
+import MenuItem from '@mui/material/MenuItem';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -23,6 +17,8 @@ import { visuallyHidden } from "@mui/utils";
 import { DashboardLayout } from "../components/dashboard-layout";
 import { auditService } from "../services";
 import TextField from "@mui/material/TextField";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker"
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import assign from "lodash/assign";
 import Head from "next/head";
@@ -213,6 +209,42 @@ function Page() {
   const [openAlertBox, setOpenAlertBox] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
+
+  const categories = [
+    {
+      value: 'BIFAST',
+      label: 'BIFAST',
+    },
+    {
+      value: 'ESB MONOLITH',
+      label: 'ESB MONOLITH',
+    },
+    {
+      value: 'ESB MSR',
+      label: 'ESB MSR',
+    },
+    {
+      value: 'PROSWITCHING',
+      label: 'PROSWITCHING',
+    },
+    {
+      value: 'BRIINTERFACE',
+      label: 'BRIINTERFACE',
+    },
+  ];
+
+  const statusReport = [
+    {
+      value: 'OPEN',
+      label: 'OPEN',
+    },
+    {
+      value: 'CLOSED',
+      label: 'CLOSED',
+    },
+
+  ];
+
   React.useEffect(() => {
     auditService
       .auditGet()
@@ -312,7 +344,7 @@ function Page() {
           <Grid item xs={10}>
             <TextField
               id="alertName"
-              label="Name of Alert"
+              label="Issue"
               maxRows={4}
               multiline
               onChange={handleChange}
@@ -321,7 +353,7 @@ function Page() {
           <Grid item xs={5}>
             <TextField
               id="groupName"
-              label="Group Whatsapp"
+              label="Start Time"
               multiline
               maxRows={4}
               onChange={handleChange}
@@ -330,29 +362,58 @@ function Page() {
           <Grid item xs={5}>
             <TextField
               id="caption"
-              label="Caption for Alert"
+              label="End Time"
               multiline
               onChange={handleChange}
             />
           </Grid>
+          
           <Grid item xs={10}>
-            <TextField
+            {/* <TextField
               id="kibanaQuery"
-              label="KQL Query"
+              label="Kategori"
               multiline
               onChange={handleChange}
               rows={6}
-            />
-          </Grid>
-          <Grid item xs={10}>
+            /> */}
             <TextField
+              id="outlined-select-currency"
+              select
+              label="Kategori Aplikasi"
+              defaultValue="BIFAST"
+            >
+            {categories.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+          </Grid>
+
+          <Grid item xs={10}>
+            {/* <TextField
               id="threshold"
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-              label="Threshold"
+              label="Status"
               multiline
               onChange={handleChange}
               type="number"
-            />
+            /> */}
+
+            <TextField
+              id="outlined-select-currency"
+              select
+              label="Status Report"
+              defaultValue="OPEN"
+            >
+              {statusReport.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+              ))}
+            </TextField>
+
+            
           </Grid>
           <Grid item xs={10}>
             <Button
