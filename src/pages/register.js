@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React from "react";
+import React, { useState } from "react";
 import Router from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -12,27 +12,32 @@ import {
   Link,
 } from "@mui/material";
 import { userService, alertService, AlertBox } from "../services";
-import { useState } from "react";
 
-const Login = () => {
+const Register = () => {
   const [open, setOpen] = useState(false);
   const [messageAlert, setMessageAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("error");
   const formik = useFormik({
     initialValues: {
-      user: "",
+      username: "",
+      email: "",
       password: "",
+      pn: "",
     },
     validationSchema: Yup.object({
-      user: Yup.string().max(255).required("Username is required!"),
+      username: Yup.string().max(255).required("Username is required!"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required!"),
       password: Yup.string().max(255).required("Password is required!"),
+      pn: Yup.string().max(255).required("Personal Number is required!"),
     }),
     onSubmit: (values, { setSubmitting }) => {
       userService
-        .login(formik.values.user, formik.values.password)
+        .register(values.username, values.email, values.password, values.pn)
         .then((data) => {
-          if (data.status == true) {
-            Router.push("/").catch(console.error);
+          if (data.status === true) {
+            Router.push("/login").catch(console.error);
           } else {
             setOpen(true);
             setMessageAlert(data.message);
@@ -47,7 +52,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Login | MDO</title>
+        <title>Register | MDO</title>
       </Head>
       <Box
         component="main"
@@ -65,28 +70,50 @@ const Login = () => {
             message={messageAlert}
             errorType={errorAlert}
           />
-          <Box
-            component="img"
-            sx={{
-              height: 300,
-              width: 600,
-            }}
-            alt="MDO"
-            src={"/static/images/logo/mdo_no_bg.png"}
-          />
-
-          <form onSubmit={formik.handleSubmit}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Register
+          </Typography>
+          <form
+            onSubmit={formik.handleSubmit}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
             <TextField
-              error={Boolean(formik.touched.user && formik.errors.user)}
+              error={Boolean(formik.touched.username && formik.errors.username)}
               fullWidth
-              helperText={formik.touched.user && formik.errors.user}
-              label="Personal Number / Username"
+              helperText={formik.touched.username && formik.errors.username}
+              label="Username"
               margin="normal"
-              name="user"
+              name="username"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="text"
-              value={formik.values.user}
+              value={formik.values.username}
+              variant="outlined"
+            />
+            <TextField
+              error={Boolean(formik.touched.pn && formik.errors.pn)}
+              fullWidth
+              helperText={formik.touched.pn && formik.errors.pn}
+              label="Personal Number"
+              margin="normal"
+              name="pn"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="text"
+              value={formik.values.pn}
+              variant="outlined"
+            />
+            <TextField
+              error={Boolean(formik.touched.email && formik.errors.email)}
+              fullWidth
+              helperText={formik.touched.email && formik.errors.email}
+              label="Email"
+              margin="normal"
+              name="email"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="email"
+              value={formik.values.email}
               variant="outlined"
             />
             <TextField
@@ -102,7 +129,6 @@ const Login = () => {
               value={formik.values.password}
               variant="outlined"
             />
-
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
@@ -112,15 +138,14 @@ const Login = () => {
                 type="submit"
                 variant="contained"
               >
-                SIGN IN
+                REGISTER
               </Button>
             </Box>
           </form>
-
           <Typography variant="body1" align="center">
-            Don't have an account?{" "}
-            <Link href="/register" underline="always">
-              Register here
+            Already have an account?{" "}
+            <Link href="/login" underline="always">
+              Login here
             </Link>
           </Typography>
         </Container>
@@ -129,4 +154,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

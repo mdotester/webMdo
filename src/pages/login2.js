@@ -3,14 +3,7 @@ import React from "react";
 import Router from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Box,
-  Button,
-  Container,
-  TextField,
-  Typography,
-  Link,
-} from "@mui/material";
+import { Box, Button, Container, TextField } from "@mui/material";
 import { userService, alertService, AlertBox } from "../services";
 import { useState } from "react";
 
@@ -33,9 +26,13 @@ const Login = () => {
         .then((data) => {
           if (data.status == true) {
             Router.push("/").catch(console.error);
+            // console.log("Logged IN");
           } else {
+            //setopen buat aktivasi alert
             setOpen(true);
+            //setmessage buat pesannya
             setMessageAlert(data.message);
+            //seterror buat tipe alertnya.
             setErrorAlert("error");
           }
         })
@@ -72,6 +69,7 @@ const Login = () => {
               width: 600,
             }}
             alt="MDO"
+            // src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
             src={"/static/images/logo/mdo_no_bg.png"}
           />
 
@@ -102,7 +100,6 @@ const Login = () => {
               value={formik.values.password}
               variant="outlined"
             />
-
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
@@ -117,12 +114,23 @@ const Login = () => {
             </Box>
           </form>
 
-          <Typography variant="body1" align="center">
-            Don't have an account?{" "}
-            <Link href="/register" underline="always">
-              Register here
-            </Link>
-          </Typography>
+          {/* <Box sx={{ py: 2 }}>
+              <Button
+                color="primary"
+                disabled={formik.isSubmitting}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+                onClick={() => {
+                  setOpen(true);
+                  setMessageAlert("Testing Alertbox");
+                  setErrorAlert("success");
+                }}
+              >
+               TESTING
+              </Button>
+          </Box> */}
         </Container>
       </Box>
     </>

@@ -19,6 +19,7 @@ import {
   ListItemText,
   Typography,
   useMediaQuery,
+  Icon,
 } from "@mui/material";
 import { Selector as SelectorIcon } from "../icons/selector";
 import { Logo } from "./logo";
@@ -31,6 +32,8 @@ import HubIcon from "@mui/icons-material/Hub";
 import PaidIcon from "@mui/icons-material/Paid";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import LogoutIcon from "@mui/icons-material/Logout";
+import NetworkWifiIcon from "@mui/icons-material/NetworkWifi";
+import ManageIcon from "@mui/icons-material/ManageAccounts";
 
 const items = [
   {
@@ -83,7 +86,21 @@ const items = [
       },
     ],
   },
-
+  {
+    icon: <NetworkWifiIcon />,
+    title: "Proswitching",
+    submenus: [
+      {
+        href: "/onoff2",
+        title: "On/Off Logon",
+      },
+    ],
+  },
+  {
+    href: "/userManagement",
+    icon: <ManageIcon />,
+    title: "User Management",
+  },
   {
     href: "/logout",
     icon: <LogoutIcon />,
@@ -192,24 +209,25 @@ export const DashboardSidebar = (props) => {
             >
               <div>
                 {user && (
-                  <Typography color="inherit" variant="subtitle2">
+                  <Typography
+                    color="inherit"
+                    variant="subtitle2"
+                    style={{ fontSize: "16px", fontWeight: "bold" }}
+                  >
                     {userService.userValue.data.sname}
                   </Typography>
                 )}
-                <br />
+                {user && (
+                  <Typography color="neutral.400" variant="body2">
+                    {userService.userValue.data.htext}
+                  </Typography>
+                )}
                 {user && (
                   <Typography color="neutral.400" variant="body2">
                     {userService.userValue.data.pernr}
                   </Typography>
                 )}
               </div>
-              <SelectorIcon
-                sx={{
-                  color: "neutral.500",
-                  width: 14,
-                  height: 14,
-                }}
-              />
             </Box>
           </Box>
         </div>
